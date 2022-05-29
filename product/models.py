@@ -21,7 +21,7 @@ class SubSubCategory(models.Model):
 
 class Picture(models.Model):
     name = models.CharField(max_length=100)
-    path = models.FileField()
+    path = models.CharField(max_length=600)
 
 
 class Property(models.Model):
@@ -60,7 +60,7 @@ class Product(models.Model):
 
     name = models.CharField(max_length=200)
     price = models.IntegerField(validators=[MinValueValidator(0)])
-    discount = models.ForeignKey(Discount, on_delete=models.CASCADE, null=True)
+    discount = models.ForeignKey(Discount,  null=True,blank=True,on_delete=models.CASCADE)
     pictures = models.ManyToManyField(Picture)
     properties = models.ManyToManyField(Property)
     options = models.ManyToManyField(Option)
