@@ -38,7 +38,18 @@ class ProductSerializer(serializers.ModelSerializer):
     options = OptionSerializer(many=True, read_only=True)
     category = CategorySerializer(many=True, read_only=True)
     discount = DiscountSerializer(read_only=True)
-
+    price = serializers.IntegerField(read_only=True)
+    total = serializers.SerializerMethodField()
+   
+        
     class Meta:
         model = Product
         fields = '__all__'
+
+    def get_total(self, obj):
+        data = Product.objects.filter(id=obj.id)
+        for x in data:
+            sum = x.price
+            if x.discount :
+                sum =  x.price -(((x.price) * (x.discount.percent)/100))
+        return int(sum)
