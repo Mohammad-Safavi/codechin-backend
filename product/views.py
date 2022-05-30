@@ -5,9 +5,7 @@ from rest_framework import viewsets
 from .models import *
 from .serializers import *
 
-class ProductViewSet(viewsets.ViewSet):
-
-    def list(self, request):
-        queryset = Product.objects.all()
-        serializer = ProductSerializer(queryset, many=True)
-        return Response(serializer.data)
+class ProductViewSet(viewsets.ModelViewSet):
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+   
