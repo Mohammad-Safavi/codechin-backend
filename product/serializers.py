@@ -33,6 +33,7 @@ class DiscountSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    
     pictures = PictureSerializer(many=True, read_only=True)
     properties = PropertySerializer(many=True, read_only=True)
     options = OptionSerializer(many=True, read_only=True)
@@ -40,7 +41,7 @@ class ProductSerializer(serializers.ModelSerializer):
     discount = DiscountSerializer(read_only=True)
     price = serializers.IntegerField(read_only=True)
     total = serializers.SerializerMethodField()
-   
+
         
     class Meta:
         model = Product
@@ -53,3 +54,5 @@ class ProductSerializer(serializers.ModelSerializer):
             if x.discount :
                 sum =  x.price -(((x.price) * (x.discount.percent)/100))
         return int(sum)
+
+   

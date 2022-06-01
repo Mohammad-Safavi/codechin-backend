@@ -18,6 +18,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         if stdi == 'true':
             queryset = Product.objects.filter(~Q(discount=None))
         if num == None:
-            return queryset.all()
+            return queryset.order_by('-created_at').all()
         else:
-            return queryset.all()[:int(num)]
+            return queryset.order_by('-created_at').all()[:int(num)]
