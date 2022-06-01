@@ -14,7 +14,10 @@ class ProductViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Product.objects
         stdi = self.request.query_params.get('is_discount', None)
-        num = self.request.query_params.get('page_size')
+        num = self.request.query_params.get('page_size',None)
         if stdi == 'true':
             queryset = Product.objects.filter(~Q(discount=None))
-        return queryset.all()[:int(num)]
+        if num == None:
+            return queryset.all()
+        else:
+            return queryset.all()[:int(num)]
