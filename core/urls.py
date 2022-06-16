@@ -12,5 +12,7 @@ urlpatterns = [
     path('login/', obtain_auth_token,
          name='login'),  # <-- And here
     path('register/', RegisterViewSet.as_view({'post' : 'post'})),
+    path('register-code/', RegisterCodeView.as_view()),
+    path('register-code-verify/', RegisterCodeVerifyView.as_view()),
     path('profile/', ProfileView.as_view()),
 ]
