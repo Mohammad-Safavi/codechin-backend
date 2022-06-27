@@ -33,7 +33,6 @@ class DiscountSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    
     pictures = PictureSerializer(many=True, read_only=True)
     properties = PropertySerializer(many=True, read_only=True)
     options = OptionSerializer(many=True, read_only=True)
