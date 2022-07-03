@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from rest_framework.permissions import IsAuthenticated
 import requests
 import json
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from .models import *
 from .serializers import *
 
@@ -18,6 +18,13 @@ class CartViewSet(viewsets.ModelViewSet):
         queryset = Cart.objects.filter(user=self.request.user)
         return queryset
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({'success':'حذف با موفقیت انجام شد.'}, status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()
     # def create(self, request, *args, **kwargs):
     #     serializer = CartSerializer(
     #         data=request.data, context={'request': request})
