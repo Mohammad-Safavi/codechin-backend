@@ -16,9 +16,21 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = '__all__'
 
-    # def create(self, validated_data):
-    #     cart = Cart.objects.create(
-    #         product=validated_data['product'],
-    #         options=validated_data['options']
-    #     )
-    #     return cart
+
+class CreateCartSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Cart
+        fields = ('product', 'options')
+    
+    def create(self, validated_data):
+        if Cart.objects.filter(user=self.context['request'].user,product=validated_data['product']).exists() :
+            raise serializers.ValidationError(
+                {"error" : "این محصول در سبد خرید شما وجود دارد."})
+        cart_data = Cart()
+        cart_data.user=self.context['request'].user
+        cart_data.product=validated_data['product']
+        cart_data.save()
+        cart_data.options.set(validated_data['options'])
+        return cart_data
+

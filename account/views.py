@@ -4,33 +4,10 @@ from django.shortcuts import redirect
 from rest_framework.permissions import IsAuthenticated
 import requests
 import json
+from rest_framework.views import APIView
 from rest_framework import viewsets, status
 from .models import *
 from .serializers import *
-
-
-class CartViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    serializer_class = CartSerializer
-    queryset = Cart.objects.all()
-
-    def get_queryset(self):
-        queryset = Cart.objects.filter(user=self.request.user)
-        return queryset
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({'success':'حذف با موفقیت انجام شد.'}, status=status.HTTP_204_NO_CONTENT)
-
-    def perform_destroy(self, instance):
-        instance.delete()
-    # def create(self, request, *args, **kwargs):
-    #     serializer = CartSerializer(
-    #         data=request.data, context={'request': request})
-    #     if serializer.is_valid(raise_exception=True):
-    #         if serializer.save():
-    #             return Response({'success':'ثبت نام کاربر با موفقیت انجام شد.'})
 
 
 MERCHANT = '00000000-0000-0000-0000-000000000000'
@@ -99,3 +76,40 @@ def verify(request):
             return HttpResponse(f"Error code: {e_code}, Error Message: {e_message}")
     else:
         return HttpResponse('Transaction failed or canceled by user')
+
+
+class CartViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CartSerializer
+    queryset = Cart.objects.all()
+
+    def get_queryset(self):
+        queryset = Cart.objects.filter(user=self.request.user)
+        return queryset
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({'success':'حذف با موفقیت انجام شد.'}, status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
+    def create(self, request, *args, **kwargs):
+        serializer = CreateCartSerializer(
+            data=request.data, context={'request': request})
+        if serializer.is_valid(raise_exception=True):
+            if serializer.save():
+                return Response({'success':'محصول موردنظر با موفقیت به سبد خرید افزوده شد.'})
+
+
+class CountCartView(APIView):
+    permission_classes = [IsAuthenticated]
+   
+    def post(self, request, format=None):
+        action = request.data['action']
+        if Cart.objects.filter(pk=request.data['cart_id']).exists():
+            if action == "add" :
+                return Response({'success':'محصول موردنظر با موفقیت به سبد خرید افزوده شد.'})
+
+
