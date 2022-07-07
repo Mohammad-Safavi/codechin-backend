@@ -90,7 +90,7 @@ class CartViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return Response({'success':'حذف با موفقیت انجام شد.'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'success':'حذف با موفقیت انجام شد.'})
 
     def perform_destroy(self, instance):
         instance.delete()
@@ -106,10 +106,23 @@ class CartViewSet(viewsets.ModelViewSet):
 class CountCartView(APIView):
     permission_classes = [IsAuthenticated]
    
-    def post(self, request, format=None):
+    def post(self, request):
         action = request.data['action']
-        if Cart.objects.filter(pk=request.data['cart_id']).exists():
+        cart_id = request.data['cart_id']
+        cart = Cart.objects.filter(pk=cart_id)
+        if cart.exists():
             if action == "add" :
-                return Response({'success':'محصول موردنظر با موفقیت به سبد خرید افزوده شد.'})
+                cart.update(count=cart.first().count+1)
+                return Response({'success':'تعداد محصول در سبد خرید شما افزایش یافت'})
+            elif action == "dec" :
+                if cart.first().count > 1 :
+                    cart.update(count=cart.first().count-1)
+                    return Response({'success':'تعداد محصول در سبد خرید شما کاهش یافت.'})
+                else :
+                    return Response({'error':'تعداد محصول شما از ۱ عدد نمی تواند کمتر شود.'}, status=status.HTTP_204_NO_CONTENT)
+            else :
+                return Response({'error':'مقدار action نا مفهوم است.'}, status=status.HTTP_204_NO_CONTENT)
+        else :
+            return Response({'error':'سبد خرید موردنظر معتبر نمی باشد.'}, status=status.HTTP_204_NO_CONTENT)
 
 

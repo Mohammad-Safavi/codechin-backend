@@ -11,5 +11,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('request/', send_request, name='request'),
     path('verify/', verify, name='verify'),
-    path('cart/count/', CountCartView.as_view()),
+    path('cart-count/', CountCartView.as_view()),
 ]
