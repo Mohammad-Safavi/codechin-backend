@@ -118,7 +118,7 @@ class AddressViewSet(viewsets.ModelViewSet):
         return queryset
 
     def destroy(self, request, *args, **kwargs):
-        queryset = Address.objects.filter(user=self.request.user)
+        queryset = Address.objects.filter(pk=kwargs['pk'],user=self.request.user)
         if not queryset:
             return Response({'error':'شما مجوز حذف این نشانی را ندارید.'}, status=status.HTTP_204_NO_CONTENT)
         queryset.delete()

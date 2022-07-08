@@ -54,4 +54,19 @@ class ProductSerializer(serializers.ModelSerializer):
                 sum =  x.price -(((x.price) * (x.discount.percent)/100))
         return int(sum)
 
+class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = ('product', 'text','status')
+    
+    def create(self, validated_data):
+        comment = Comment()
+        comment.product =validated_data['product']
+        comment.text =validated_data['text']
+        comment.status=2
+        comment.user=self.context['request'].user
+        comment.save()
+        return validated_data
+
    

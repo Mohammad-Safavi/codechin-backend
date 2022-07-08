@@ -38,13 +38,16 @@ class PaymentSerializer(serializers.ModelSerializer):
         payment = Payment.objects.create(user=self.context['request'].user,price=0,status=2)
 
         for x in cart_data:
-            invoice = Invoice()
-            invoice.payment=payment
-            invoice.product=x.product
-            invoice.count=x.count
-            invoice.save()
-            for x_ in x.options:
-                invoice.options.add(x_)
+            # invoice = Invoice()
+            # invoice.payment=payment
+            # invoice.product=x.product
+            # invoice.count=x.count
+            # invoice.save()
+            # for x_ in x.options:
+            #     invoice.options.add(x_)
+            db = Invoice(product = x.product, count= x.count, payment=payment)
+            db.save()
+            db.options.add(x.options)
 
         return payment
 
