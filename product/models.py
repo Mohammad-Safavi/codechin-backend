@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
 
 
 class Category(models.Model):
@@ -133,3 +134,23 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Comment(models.Model):
+    class Meta:
+        verbose_name = 'دیدگاه ها'
+        verbose_name_plural = 'دیدگاه ها'
+
+
+    STATUS_CONFIRMED = 1
+    STATUS_UNCONFIRMED = 2
+    CHOICES_STATUS = (
+        (STATUS_CONFIRMED , 'تاییده شده'),
+        (STATUS_UNCONFIRMED , 'تایید نشده'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="محصول")
+    text = models.TextField(verbose_name="متن")
+    status = models.SmallIntegerField(choices=CHOICES_STATUS, default=STATUS_UNCONFIRMED, verbose_name="وضعیت")
+    created_at = models.DateTimeField(auto_now_add=True, null=True)

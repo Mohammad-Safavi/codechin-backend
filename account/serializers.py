@@ -1,3 +1,4 @@
+from xml.etree.ElementPath import xpath_tokenizer_re
 from django.contrib.auth import authenticate
 
 from rest_framework import serializers
@@ -16,6 +17,36 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = '__all__'
 
+class AddressSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Address
+        fields = ('title', 'address', 'post_code')
+    
+    def create(self, validated_data):
+        Address.objects.create(user=self.context['request'].user,**validated_data)
+        return validated_data
+
+class PaymentSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Payment
+        fields = ''
+    
+    def create(self, validated_data):
+        cart_data = Cart.objects.filter(user=self.context['request'].user)
+        payment = Payment.objects.create(user=self.context['request'].user,price=0,status=2)
+
+        for x in cart_data:
+            invoice = Invoice()
+            invoice.payment=payment
+            invoice.product=x.product
+            invoice.count=x.count
+            invoice.save()
+            for x_ in x.options:
+                invoice.options.add(x_)
+
+        return payment
 
 class CreateCartSerializer(serializers.ModelSerializer):
 

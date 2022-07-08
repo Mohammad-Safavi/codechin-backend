@@ -103,6 +103,35 @@ class CartViewSet(viewsets.ModelViewSet):
                 return Response({'success':'محصول موردنظر با موفقیت به سبد خرید افزوده شد.'})
 
 
+class PaymentViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
+
+class AddressViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AddressSerializer
+    queryset = Address.objects.all()
+
+    def get_queryset(self):
+        queryset = Address.objects.filter(user=self.request.user)
+        return queryset
+
+    def destroy(self, request, *args, **kwargs):
+        queryset = Address.objects.filter(user=self.request.user)
+        if not queryset:
+            return Response({'error':'شما مجوز حذف این نشانی را ندارید.'}, status=status.HTTP_204_NO_CONTENT)
+        queryset.delete()
+        return Response({'success':'حذف با موفقیت انجام شد.'})
+
+    def create(self, request, *args, **kwargs):
+        serializer = AddressSerializer(
+            data=request.data, context={'request': request})
+        if serializer.is_valid(raise_exception=True):
+            if serializer.save():
+                return Response({'success':'نشانی شما با موفقیت ثبت شد.'})
+
+
 class CountCartView(APIView):
     permission_classes = [IsAuthenticated]
    

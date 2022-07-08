@@ -48,3 +48,18 @@ class Invoice(models.Model):
     options = models.ManyToManyField(
         Option, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+
+class Address(models.Model):
+    class Meta:
+        verbose_name = 'آدرس ها'
+        verbose_name_plural = 'آدرس ها'
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")
+    title = models.CharField(max_length=255, verbose_name="عنوان")
+    address = models.TextField(verbose_name="آدرس")
+    post_code = models.CharField(null=True, blank=True, max_length=255, verbose_name="کد پستی")
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.user.username
