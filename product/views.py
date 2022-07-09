@@ -51,6 +51,6 @@ class CommentViewSet(viewsets.ModelViewSet):
 class CommentProductView(APIView):
 
     def get(self,request, *args, **kwargs):
-        queryset = Comment.objects.filter(product=kwargs['pk'])
+        queryset = Comment.objects.filter(product=kwargs['pk'],status=1)
         return Response(CommentSerializer(queryset, many=True).data)
     
